@@ -26,7 +26,7 @@ export default function Loading() {
                         seconds.
                     </DialogDescription>
                 </DialogHeader>
-                <Lottie className="w-36" animationData={loadingAnimation} />
+                <Lottie className="w-36 lottie-animation" animationData={loadingAnimation} />
             </DialogContent>
         </Dialog>
     )

@@ -6,8 +6,8 @@ import UploadForm from "./upload/upload-form"
 import ActiveImage from "./active-image"
 import { useLayerStore } from "@/lib/layer-store"
 import ImageTools from "./toolbar/image-toolbar"
+import LayerCanvas from "./layer-canvas"
 import Loading from "./loading"
-import ExportAsset from "./toolbar/export-image"
 
 export default function Editor() {
     const activeLayer = useLayerStore((state) => state.activeLayer)
@@ -24,7 +24,7 @@ export default function Editor() {
             </div>
             <Loading />
             <UploadForm />
-            <ActiveImage />
+            <LayerCanvas />
             <Layers />
         </div>
     )
