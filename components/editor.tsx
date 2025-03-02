@@ -20,9 +20,6 @@ export default function Editor() {
                 </div>
                 <div className="flex flex-col gap-4 ">
                     {activeLayer.resourceType === "image" ? <ImageTools /> : null}
-                    {activeLayer.resourceType && (
-                        <ExportAsset resource={activeLayer.resourceType} />
-                    )}
                 </div>
             </div>
             <Loading />

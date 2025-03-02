@@ -8,6 +8,7 @@ import { Button } from "../ui/button";
 import { Layers2 } from "lucide-react";
 import LayerImage from "./layer-image";
 import LayerInfo from "./layer-info";
+import ExportAsset from "./layer-eport";
 
 export default function Layers() {
     const layers = useLayerStore((state) => state.layers);
@@ -56,21 +57,9 @@ export default function Layers() {
                     </div>)}
             </CardContent>
             <div className="sticky bottom-0 bg-card flex gap-2 shrink-0">
-                <Button onClick={() => {
-                    addLayer({
-                        id: crypto.randomUUID(),
-                        url: "",
-                        height: 0,
-                        width: 0,
-                        publicId: "",
-                        name: "",
-                        format: "",
-                    })
-                }}
-                    className="w-full flex gap-2" variant={"outline"}>
-                    <span>Create Layer</span>
-                    <Layers2 className="text-secondary-foreground" size={18}></Layers2>
-                </Button>
+                {activeLayer.resourceType && (
+                    <ExportAsset resource={activeLayer.resourceType} />
+                )}
 
             </div>
         </Card>

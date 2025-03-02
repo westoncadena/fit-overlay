@@ -3,29 +3,21 @@
 import { useImageStore } from "@/lib/image-store"
 import { Button } from "@/components/ui/button"
 import { bgRemoval } from "@/server/bg-remove"
-import { Badge } from "@/components/ui/badge"
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { cn } from "@/lib/utils"
-import { Image, Paintbrush } from "lucide-react"
+import { SquareScissors } from "lucide-react"
 import { useLayerStore } from "@/lib/layer-store"
 import { toast } from "sonner"
 
 export default function BgRemove() {
-    const tags = useImageStore((state) => state.tags)
-    const setActiveTag = useImageStore((state) => state.setActiveTag)
     const activeTag = useImageStore((state) => state.activeTag)
-    const setActiveColor = useImageStore((state) => state.setActiveColor)
     const activeColor = useImageStore((state) => state.activeColor)
     const setGenerating = useImageStore((state) => state.setGenerating)
     const activeLayer = useLayerStore((state) => state.activeLayer)
     const addLayer = useLayerStore((state) => state.addLayer)
-    const layers = useLayerStore((state) => state.layers)
     const generating = useImageStore((state) => state.generating)
     const setActiveLayer = useLayerStore((state) => state.setActiveLayer)
     return (
@@ -34,7 +26,7 @@ export default function BgRemove() {
                 <Button variant="outline" className="py-8">
                     <span className="flex gap-1 items-center justify-center flex-col text-xs font-medium">
                         BG Removal
-                        <Image size={18} />
+                        <SquareScissors size={18} />
                     </span>
                 </Button>
             </PopoverTrigger>
@@ -70,6 +62,7 @@ export default function BgRemove() {
                                 url: res.data.success,
                                 publicId: activeLayer.publicId,
                                 resourceType: "image",
+                                order: 0,
                             })
                             setGenerating(false)
                             setActiveLayer(newLayerId)

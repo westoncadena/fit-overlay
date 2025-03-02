@@ -1,6 +1,4 @@
 'use client'
-
-import Image from "next/image";
 import { ImageStore } from "@/lib/image-store";
 import { LayerStore } from "@/lib/layer-store";
 import Editor from "@/components/editor";
@@ -17,6 +15,7 @@ export default function Home() {
           height: 0,
           width: 0,
           publicId: "",
+          order: 0
         },
         ],
       }}

@@ -14,7 +14,6 @@ import { Input } from "../ui/input"
 import { genRemove } from "@/server/gen-remove"
 
 export default function GenRemove() {
-    const tags = useImageStore((state) => state.tags)
     const setActiveTag = useImageStore((state) => state.setActiveTag)
     const generating = useImageStore((state) => state.generating)
     const activeTag = useImageStore((state) => state.activeTag)
@@ -74,6 +73,7 @@ export default function GenRemove() {
                                 name: activeLayer.name,
                                 publicId: activeLayer.publicId,
                                 resourceType: "image",
+                                order: 0
                             })
                             setActiveLayer(newLayerId)
                         }

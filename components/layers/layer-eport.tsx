@@ -8,7 +8,6 @@ import {
     Card,
     CardContent,
     CardDescription,
-    CardHeader,
     CardTitle,
 } from "../ui/card"
 import { useState } from "react"
@@ -62,11 +61,10 @@ export default function ExportAsset({ resource }: { resource: string }) {
         <Dialog>
             <DialogTitle />
             <DialogTrigger disabled={!activeLayer?.url} asChild>
-                <Button variant="outline" className="py-8">
-                    <span className="flex gap-1 items-center justify-center flex-col text-xs font-medium">
-                        Export
-                        <Download size={18} />
-                    </span>
+                <Button className="w-full flex gap-2"
+                    variant="outline">
+                    <span> Export </span>
+                    <Download size={18} />
                 </Button>
             </DialogTrigger>
             <DialogContent>

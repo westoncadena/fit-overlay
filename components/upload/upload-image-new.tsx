@@ -13,7 +13,7 @@ import { toast } from "sonner"
 export default function UploadImage() {
     const setTags = useImageStore((state) => state.setTags)
     const setGenerating = useImageStore((state) => state.setGenerating)
-    const activeLayer = useLayerStore((state) => state.activeLayer)
+    const addLayer = useLayerStore((state) => state.addLayer)
     const updateLayer = useLayerStore((state) => state.updateLayer)
     const setActiveLayer = useLayerStore((state) => state.setActiveLayer)
 
@@ -33,8 +33,9 @@ export default function UploadImage() {
                 const objectUrl = URL.createObjectURL(acceptedFiles[0])
                 setGenerating(true)
 
-                updateLayer({
-                    id: activeLayer.id,
+                const newLayerId = crypto.randomUUID()
+                addLayer({
+                    id: newLayerId,
                     url: objectUrl,
                     width: 0,
                     height: 0,
@@ -44,7 +45,7 @@ export default function UploadImage() {
                     resourceType: "image",
                     order: 0,
                 })
-                setActiveLayer(activeLayer.id)
+                setActiveLayer(newLayerId)
                 const res = await uploadImage({ image: formData })
 
                 if (res?.data?.success) {
@@ -52,7 +53,7 @@ export default function UploadImage() {
 
                     if (resourceType === "image") {
                         updateLayer({
-                            id: activeLayer.id,
+                            id: newLayerId,
                             url: res.data.success.url,
                             width: res.data.success.width,
                             height: res.data.success.height,
@@ -65,8 +66,7 @@ export default function UploadImage() {
                     }
                     setTags(res.data.success.tags)
 
-                    setActiveLayer(activeLayer.id)
-                    console.log(activeLayer)
+                    setActiveLayer(newLayerId)
                     setGenerating(false)
                 }
                 if (res?.data?.error) {
@@ -81,29 +81,28 @@ export default function UploadImage() {
         },
     })
 
-    if (!activeLayer.url)
-        return (
-            <Card
-                {...getRootProps()}
-                className={cn(
-                    " hover:cursor-pointer hover:bg-secondary hover:border-primary transition-all  ease-in-out ",
-                    `${isDragActive ? "animate-pulse border-primary bg-secondary" : ""}`
-                )}
-            >
-                <CardContent className="flex flex-col h-full items-center justify-center px-2 py-24  text-xs ">
-                    <input {...getInputProps()} />
-                    <div className="flex items-center flex-col justify-center gap-4">
-                        <Lottie className="h-48" animationData={imageAnimation} />
-                        <p className="text-muted-foreground text-2xl">
-                            {isDragActive
-                                ? "Drop your image here!"
-                                : "Start by uploading an image"}
-                        </p>
-                        <p className="text-muted-foreground">
-                            Supported Formats .jpeg .jpg .png .webp
-                        </p>
-                    </div>
-                </CardContent>
-            </Card>
-        )
+    return (
+        <Card
+            {...getRootProps()}
+            className={cn(
+                " hover:cursor-pointer hover:bg-secondary hover:border-primary transition-all  ease-in-out ",
+                `${isDragActive ? "animate-pulse border-primary bg-secondary" : ""}`
+            )}
+        >
+            <CardContent className="flex flex-col h-full items-center justify-center px-2 py-24  text-xs ">
+                <input {...getInputProps()} />
+                <div className="flex items-center flex-col justify-center gap-4">
+                    <Lottie className="h-48" animationData={imageAnimation} />
+                    <p className="text-muted-foreground text-2xl">
+                        {isDragActive
+                            ? "Drop your image here!"
+                            : "Start by uploading an image"}
+                    </p>
+                    <p className="text-muted-foreground">
+                        Supported Formats .jpeg .jpg .png .webp
+                    </p>
+                </div>
+            </CardContent>
+        </Card>
+    )
 }
