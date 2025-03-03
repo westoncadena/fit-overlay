@@ -48,7 +48,6 @@ export default function LayerInfo({
                 <Button
                     onClick={(e) => {
                         e.stopPropagation()
-                        setActiveLayer(layerIndex === 0 ? layers[1].id : layers[0].id)
                         removeLayer(layer.id)
                     }}
                     variant={"destructive"}
