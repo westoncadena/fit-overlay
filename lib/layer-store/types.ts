@@ -8,7 +8,7 @@ export type Layer = {
     name?: string;
     format?: string;
     poster?: string;
-    resourceType?: 'image' | 'text';
+    resourceType?: 'image' | 'text' | 'component';
     transcriptionURL?: string;
     text?: string;
     fontSize?: number;

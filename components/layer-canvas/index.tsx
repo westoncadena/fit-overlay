@@ -6,7 +6,7 @@ import { useCanvasSize } from './use-canvas-size';
 import useLayerScale from './use-layer-scale';
 import LayerRenderer from './layer-renderer';
 import html2canvas from 'html2canvas';
-import { DndContext, DragEndEvent, DragStartEvent, useSensor, useSensors, PointerSensor } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, DragStartEvent, useSensor, useSensors, PointerSensor, DragMoveEvent } from '@dnd-kit/core';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
 
 // Extend the Window interface to include our exportCanvas function
@@ -66,7 +66,10 @@ export default function LayerCanvas() {
         setActiveLayer(active.id as string);
     };
 
-    // Handle drag end - update layer position
+    const handleDragMove = (event: DragMoveEvent) => {
+    }
+
+    // Handle drag end - update layer position with improved positioning
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, delta } = event;
         const layerId = active.id as string;
@@ -79,15 +82,62 @@ export default function LayerCanvas() {
         const currentX = layer.position?.x ?? 0;
         const currentY = layer.position?.y ?? 0;
 
-        // Update position based on delta
+        // Calculate new position based on delta and scale
+        // Divide by scale to ensure movement is consistent regardless of zoom level
         const newPosition = {
-            x: currentX + delta.x,
-            y: currentY + delta.y
+            x: currentX + delta.x / scale,
+            y: currentY + delta.y / scale
+        };
+
+        // Ensure the layer stays within canvas boundaries (optional)
+        const boundedPosition = {
+            x: Math.max(0, Math.min(newPosition.x, canvasWidth - (layer.width || 0))),
+            y: Math.max(0, Math.min(newPosition.y, canvasHeight - (layer.height || 0)))
         };
 
         // Update layer position
-        updateLayerPosition(layerId, newPosition);
+        updateLayerPosition(layerId, boundedPosition);
     };
+
+    // Add keyboard movement for selected layers (arrow keys)
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (!activeLayer || generating) return;
+
+            const layer = layers.find(l => l.id === activeLayer.id);
+            if (!layer || layer.locked) return;
+
+            const currentX = layer.position?.x ?? 0;
+            const currentY = layer.position?.y ?? 0;
+            let newPosition = { x: currentX, y: currentY };
+
+            // Move by 1px normally, 10px with shift key
+            const moveAmount = e.shiftKey ? 10 : 1;
+
+            switch (e.key) {
+                case 'ArrowLeft':
+                    newPosition.x -= moveAmount;
+                    break;
+                case 'ArrowRight':
+                    newPosition.x += moveAmount;
+                    break;
+                case 'ArrowUp':
+                    newPosition.y -= moveAmount;
+                    break;
+                case 'ArrowDown':
+                    newPosition.y += moveAmount;
+                    break;
+                default:
+                    return; // Exit if not an arrow key
+            }
+
+            e.preventDefault();
+            updateLayerPosition(activeLayer.id, newPosition);
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [activeLayer, layers, generating, updateLayerPosition]);
 
     // Clear selection when clicking on the canvas background
     const handleCanvasClick = (e: React.MouseEvent) => {
@@ -158,6 +208,7 @@ export default function LayerCanvas() {
             <DndContext
                 sensors={sensors}
                 onDragStart={handleDragStart}
+                onDragMove={handleDragMove}
                 onDragEnd={handleDragEnd}
                 modifiers={[restrictToParentElement]}
             >

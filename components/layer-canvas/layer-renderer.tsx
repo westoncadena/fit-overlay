@@ -4,6 +4,7 @@ import { Layer } from "@/lib/layer-store";
 import { cn } from "@/lib/utils";
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
+import StravaActivityRenderer from './strava-activity-renderer';
 
 interface LayerRendererProps {
     layer: Layer;
@@ -18,7 +19,8 @@ export default function LayerRenderer({ layer, isSelected, generating, onWheel, 
         id: layer.id,
         disabled: layer.locked || generating,
         data: {
-            layer
+            layer,
+            type: 'layer'
         }
     });
 
@@ -49,6 +51,7 @@ export default function LayerRenderer({ layer, isSelected, generating, onWheel, 
         border: isSelected ? '2px solid rgba(59, 130, 246, 0.8)' : 'none',
         // Apply transform only during drag
         transform: transform ? CSS.Transform.toString(transform) : undefined,
+        touchAction: 'none',
     };
 
     if (layer.resourceType === 'image') {
@@ -90,6 +93,7 @@ export default function LayerRenderer({ layer, isSelected, generating, onWheel, 
                 onClick={handleClick}
                 {...attributes}
                 {...listeners}
+                className="layer-item"
             >
                 <span
                     style={{
@@ -101,6 +105,20 @@ export default function LayerRenderer({ layer, isSelected, generating, onWheel, 
                 >
                     {layer.text || 'Text'}
                 </span>
+            </div>
+        );
+    } else if (layer.resourceType === 'component') {
+        return (
+            <div
+                ref={setNodeRef}
+                style={style}
+                onClick={handleClick}
+                onWheel={(e) => onWheel(e, layer)}
+                {...attributes}
+                {...listeners}
+                className="layer-item"
+            >
+                <StravaActivityRenderer layer={layer} />
             </div>
         );
     }

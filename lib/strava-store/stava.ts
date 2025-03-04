@@ -61,6 +61,7 @@ export async function getStravaActivities(page = 1, perPage = 30) {
         const activities = await callStravaApi<StravaActivity[]>(
             `/athlete/activities?page=${page}&per_page=${perPage}`
         )
+        console.log("Getting activities", activities)
         return { activities, error: null }
     } catch (error) {
         return { activities: [] as StravaActivity[], error: (error as Error).message || 'Unknown error getting activities' }

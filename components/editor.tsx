@@ -18,13 +18,9 @@ export default function Editor() {
         }}>
             <div className="flex h-full">
                 <div className="py-6 px-4  min-w-48 ">
-                    {/* <div className="flex flex-col gap-4 ">
-                        {activeLayer.resourceType === "image" ? <ImageTools /> : null}
-                    </div>
                     <div className="flex flex-col gap-4 ">
-                        {activeLayer.resourceType === "text" ? <ImageTools /> : null}
-                    </div> */}
-                    <ImageTools />
+                        <ImageTools />
+                    </div>
                 </div>
                 <Loading />
                 <LayerCanvas />
