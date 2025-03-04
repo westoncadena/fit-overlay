@@ -1,5 +1,4 @@
 import { createStore } from "zustand/vanilla"
-import { StoreApi } from "zustand"
 import { persist } from "zustand/middleware"
 import { Layer, LayerStore } from "./types"
 

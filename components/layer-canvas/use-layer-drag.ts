@@ -24,6 +24,7 @@ export default function useLayerDrag(
         });
     };
 
+    // Change the event listener to use native MouseEvent
     const handleMouseMove = (e: MouseEvent) => {
         if (!dragging || !activeLayerId || !containerRef.current) return;
 
@@ -47,12 +48,12 @@ export default function useLayerDrag(
 
     useEffect(() => {
         if (dragging) {
-            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mousemove', handleMouseMove as EventListener);
             document.addEventListener('mouseup', handleMouseUp);
         }
 
         return () => {
-            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mousemove', handleMouseMove as EventListener);
             document.removeEventListener('mouseup', handleMouseUp);
         };
     }, [dragging, dragOffset, activeLayerId, containerRef]);
@@ -60,10 +61,7 @@ export default function useLayerDrag(
     return {
         dragging,
         handleMouseDown,
-        handleMouseMove: (e: React.MouseEvent) => {
-            // This is just for the initial mousemove on the container
-            // The document event listener handles the rest
-        },
+        handleMouseMove,
         handleMouseUp
     };
-} 
+}

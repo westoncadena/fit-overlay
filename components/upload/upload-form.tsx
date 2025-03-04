@@ -4,7 +4,7 @@ import { useLayerStore } from "@/lib/layer-store"
 import { useState } from "react"
 import UploadImage from "./upload-image"
 
-export default function uploadFrom() {
+export default function UploadFrom() {
     const activeLayer = useLayerStore((state) => state.activeLayer)
     const [selecedType] = useState('image')
 

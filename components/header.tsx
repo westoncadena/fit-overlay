@@ -6,15 +6,21 @@ import {
     SignedOut,
     UserButton,
 } from '@clerk/nextjs'
+import { ModeToggle } from "@/components/theme/mode-toggle"
+
 
 
 export default function Header() {
 
     return (
         <header className="flex justify-between items-center p-4 border-b">
-            <Link href="/" className="font-bold text-xl">
-                Fit Overlay
-            </Link>
+            <div className="flex gap-4">
+                <Link href="/" className="font-bold text-xl">
+                    Fit Overlay
+                </Link>
+                <ModeToggle />
+            </div>
+
             <div className="flex items-center gap-4">
                 <SignedIn>
                     <Link href="/editor" className="hover:underline">

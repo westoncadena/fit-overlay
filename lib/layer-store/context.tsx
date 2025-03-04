@@ -3,10 +3,10 @@ import { StoreApi, useStore } from "zustand"
 import getStore from "./store"
 import { LayerStore } from "./types"
 
-const createZustandContext = <TInitial, TStore extends StoreApi<any>>(
+const createZustandContext = <TInitial, TStore extends StoreApi<State>>(
     getStore: (initial: TInitial) => TStore
 ) => {
-    const Context = React.createContext(null as any as TStore)
+    const Context = React.createContext<TStore | null>(null)
 
     const Provider = (props: {
         children?: React.ReactNode

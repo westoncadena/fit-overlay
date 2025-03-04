@@ -49,11 +49,19 @@ export const useStravaStore = create<StravaState>()(
                             isLoading: false,
                             lastFetched: Date.now()
                         })
-                    } catch (err: any) {
-                        set({
-                            error: err.message || 'Failed to fetch activities',
-                            isLoading: false
-                        })
+                    } catch (err: unknown) {
+
+                        if (err instanceof Error) {
+                            set({
+                                error: err.message || 'Failed to fetch activities',
+                                isLoading: false
+                            })
+                        } else {
+                            set({
+                                error: 'Unknown error occurred when fetching activites',
+                                isLoading: false
+                            })
+                        }
                     }
                 }
             },
@@ -70,11 +78,19 @@ export const useStravaStore = create<StravaState>()(
                     }
 
                     set({ athlete, isLoading: false })
-                } catch (err: any) {
-                    set({
-                        error: err.message || 'Failed to fetch athlete',
-                        isLoading: false
-                    })
+                } catch (err: unknown) { // Changed `any` to `unknown`
+                    // Narrow the error type if necessary (e.g., check if it's an instance of Error)
+                    if (err instanceof Error) {
+                        set({
+                            error: err.message || 'Failed to fetch acthlete',
+                            isLoading: false
+                        })
+                    } else {
+                        set({
+                            error: 'Unknown error occurred when fetching athlete',
+                            isLoading: false
+                        })
+                    }
                 }
             },
 

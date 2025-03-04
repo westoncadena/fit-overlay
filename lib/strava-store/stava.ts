@@ -80,7 +80,7 @@ export async function getStravaActivity(activityId: string) {
     try {
         const activity = await callStravaApi<StravaActivity>(`/activities/${activityId}`)
         return { activity, error: null }
-    } catch (error: any) {
+    } catch (error) {
         return { activity: null as StravaActivity | null, error: error.message || 'Unknown error' }
     }
 }

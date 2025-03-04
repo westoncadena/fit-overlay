@@ -17,7 +17,7 @@ export default function TextAdd() {
         if (textInput.trim()) {
             const newLayer = {
                 id: crypto.randomUUID(),
-                resourceType: 'text' as 'text',
+                resourceType: 'text' as const,
                 text: textInput,
                 fontSize: fontSize,
                 color: color,

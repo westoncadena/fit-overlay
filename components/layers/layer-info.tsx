@@ -12,13 +12,13 @@ import { Layer, useLayerStore } from "@/lib/layer-store"
 
 export default function LayerInfo({
     layer,
-    layerIndex,
+    // layerIndex,
 }: {
     layer: Layer
     layerIndex: number
 }) {
-    const layers = useLayerStore((state) => state.layers)
-    const setActiveLayer = useLayerStore((state) => state.setActiveLayer)
+    // const layers = useLayerStore((state) => state.layers)
+    // const setActiveLayer = useLayerStore((state) => state.setActiveLayer)
     const removeLayer = useLayerStore((state) => state.removeLayer)
 
     return (

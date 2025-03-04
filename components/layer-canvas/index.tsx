@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { useImageStore } from "@/lib/image-store";
 import { useLayerStore } from "@/lib/layer-store";
-import { useCanvasSize } from './use-canvas-size';
+// import { useCanvasSize } from './use-canvas-size';
 import useLayerDrag from './use-layer-drag';
 import useLayerScale from './use-layer-scale';
 import LayerRenderer from './layer-renderer';
@@ -10,7 +10,7 @@ import html2canvas from 'html2canvas';
 // Extend the Window interface to include our exportCanvas function
 declare global {
     interface Window {
-        exportCanvas: () => void;
+        exportCanvas?: () => void;
     }
 }
 
@@ -25,7 +25,7 @@ export default function LayerCanvas() {
     const generating = useImageStore((state) => state.generating);
 
     // Get canvas size
-    const canvasSize = useCanvasSize(containerRef);
+    // const canvasSize = useCanvasSize(containerRef);
 
     // Sort layers by order property (lower order = displayed below)
     const sortedLayers = [...layers].sort((a, b) => a.order - b.order);
