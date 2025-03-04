@@ -67,6 +67,7 @@ export default function LayerCanvas() {
     };
 
     const handleDragMove = (event: DragMoveEvent) => {
+        console.log("Drag move", event);
     }
 
     // Handle drag end - update layer position with improved positioning
@@ -109,7 +110,7 @@ export default function LayerCanvas() {
 
             const currentX = layer.position?.x ?? 0;
             const currentY = layer.position?.y ?? 0;
-            let newPosition = { x: currentX, y: currentY };
+            const newPosition = { x: currentX, y: currentY };
 
             // Move by 1px normally, 10px with shift key
             const moveAmount = e.shiftKey ? 10 : 1;
