@@ -1,14 +1,14 @@
 "use client"
 
 import Layers from "./layers/layers"
-import { useLayerStore } from "@/lib/layer-store"
+// import { useLayerStore } from "@/lib/layer-store"
 import ImageTools from "./toolbar/image-toolbar"
 import LayerCanvas from "./layer-canvas"
 import Loading from "./loading"
 import { ProjectStore, INSTAGRAM_ASPECT_RATIOS, QUALITY_PRESETS } from "@/lib/project-store";
 
 export default function Editor() {
-    const activeLayer = useLayerStore((state) => state.activeLayer)
+    // const activeLayer = useLayerStore((state) => state.activeLayer)
 
     return (
         <ProjectStore.Provider initialValue={{
