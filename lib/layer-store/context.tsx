@@ -3,7 +3,7 @@ import { StoreApi, useStore } from "zustand"
 import getStore from "./store"
 import { LayerStore } from "./types"
 
-const createZustandContext = <TInitial, TStore extends StoreApi<State>>(
+const createZustandContext = <TInitial, TStore extends StoreApi<LayerStore>>(
     getStore: (initial: TInitial) => TStore
 ) => {
     const Context = React.createContext<TStore | null>(null)

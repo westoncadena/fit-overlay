@@ -1,11 +1,13 @@
 import React, { useRef, useEffect } from 'react';
 import { useImageStore } from "@/lib/image-store";
 import { useLayerStore } from "@/lib/layer-store";
-// import { useCanvasSize } from './use-canvas-size';
-import useLayerDrag from './use-layer-drag';
+import { useProjectStore, useScaledCanvasDimensions } from "@/lib/project-store";
+import { useCanvasSize } from './use-canvas-size';
 import useLayerScale from './use-layer-scale';
 import LayerRenderer from './layer-renderer';
 import html2canvas from 'html2canvas';
+import { DndContext, DragEndEvent, DragStartEvent, useSensor, useSensors, PointerSensor } from '@dnd-kit/core';
+import { restrictToParentElement } from '@dnd-kit/modifiers';
 
 // Extend the Window interface to include our exportCanvas function
 declare global {
@@ -24,19 +26,23 @@ export default function LayerCanvas() {
     const updateLayerScale = useLayerStore((state) => state.updateLayerScale);
     const generating = useImageStore((state) => state.generating);
 
-    // Get canvas size
-    // const canvasSize = useCanvasSize(containerRef);
+    // Get canvas dimensions from project store
+    const { canvasWidth, canvasHeight, calculateScale } = useScaledCanvasDimensions();
+
+    console.log("canvasWidth", canvasWidth, "canvasHeight", canvasHeight);
+
+    // Get the container size
+    const containerSize = useCanvasSize(containerRef);
+
+    // Calculate the scale based on container size
+    const scale = calculateScale(containerSize.width, containerSize.height);
+
+    console.log("Container size:", containerSize, "Scale:", scale);
+
+    const projectName = useProjectStore((state) => state.projectName);
 
     // Sort layers by order property (lower order = displayed below)
     const sortedLayers = [...layers].sort((a, b) => a.order - b.order);
-
-    // Layer dragging functionality
-    const { handleMouseDown, handleMouseMove, handleMouseUp } = useLayerDrag(
-        activeLayer?.id || '',
-        layers,
-        updateLayerPosition,
-        containerRef
-    );
 
     // Layer scaling functionality
     const { handleWheel } = useLayerScale(
@@ -44,6 +50,44 @@ export default function LayerCanvas() {
         layers,
         updateLayerScale
     );
+
+    // Configure DnD sensors
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 5, // Start dragging after moving 5px
+            }
+        })
+    );
+
+    // Handle drag start - set active layer
+    const handleDragStart = (event: DragStartEvent) => {
+        const { active } = event;
+        setActiveLayer(active.id as string);
+    };
+
+    // Handle drag end - update layer position
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, delta } = event;
+        const layerId = active.id as string;
+
+        // Find the layer
+        const layer = layers.find(l => l.id === layerId);
+        if (!layer || layer.locked) return;
+
+        // Get current position (handle both formats)
+        const currentX = layer.position?.x ?? 0;
+        const currentY = layer.position?.y ?? 0;
+
+        // Update position based on delta
+        const newPosition = {
+            x: currentX + delta.x,
+            y: currentY + delta.y
+        };
+
+        // Update layer position
+        updateLayerPosition(layerId, newPosition);
+    };
 
     // Clear selection when clicking on the canvas background
     const handleCanvasClick = (e: React.MouseEvent) => {
@@ -76,7 +120,7 @@ export default function LayerCanvas() {
 
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement('a');
-                    link.download = `canvas-export-${new Date().toISOString().slice(0, 10)}.png`;
+                    link.download = `${projectName || 'canvas-export'}-${new Date().toISOString().slice(0, 10)}.png`;
                     link.href = url;
                     link.click();
 
@@ -92,7 +136,7 @@ export default function LayerCanvas() {
         return () => {
             delete window.exportCanvas;
         };
-    }, []);
+    }, [projectName]);
 
     if (!layers.length) return (
         <div className="relative w-full h-svh flex items-center justify-center bg-secondary">
@@ -104,30 +148,46 @@ export default function LayerCanvas() {
         <div
             ref={containerRef}
             className="relative w-full h-svh p-4 bg-secondary overflow-hidden"
-            onMouseUp={handleMouseUp}
             onClick={handleCanvasClick}
-            onMouseMove={handleMouseMove}
             style={{
                 backgroundImage: 'linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)',
                 backgroundSize: '20px 20px',
                 backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
             }}
         >
-            <div
-                ref={canvasContentRef}
-                className="absolute inset-8 bg-white rounded-lg shadow-lg"
+            <DndContext
+                sensors={sensors}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+                modifiers={[restrictToParentElement]}
             >
-                {sortedLayers.map(layer => (
-                    <LayerRenderer
-                        key={layer.id}
-                        layer={layer}
-                        isSelected={layer.id === activeLayer?.id}
-                        generating={generating}
-                        onMouseDown={handleMouseDown}
-                        onWheel={handleWheel}
-                    />
-                ))}
-            </div>
+                <div
+                    ref={canvasContentRef}
+                    className="absolute shadow-lg bg-white"
+                    style={{
+                        width: `${canvasWidth}px`,
+                        height: `${canvasHeight}px`,
+                        transform: `scale(${scale})`,
+                        transformOrigin: 'center',
+                        left: '50%',
+                        top: '50%',
+                        marginLeft: `-${canvasWidth / 2}px`,
+                        marginTop: `-${canvasHeight / 2}px`,
+                        border: '1px solid #ddd'
+                    }}
+                >
+                    {sortedLayers.map(layer => (
+                        <LayerRenderer
+                            key={layer.id}
+                            layer={layer}
+                            isSelected={layer.id === activeLayer?.id}
+                            generating={generating}
+                            onWheel={handleWheel}
+                            onSelect={setActiveLayer}
+                        />
+                    ))}
+                </div>
+            </DndContext>
         </div>
     );
 } 

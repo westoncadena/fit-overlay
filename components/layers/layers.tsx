@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useImageStore } from "@/lib/image-store";
 import LayerImage from "./layer-image";
 import LayerInfo from "./layer-info";
+import { Layer } from "@/lib/layer-store";
 import ExportAsset from "./layer-eport";
 import {
     DndContext,
@@ -25,7 +26,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 
 // Create a sortable layer item component
-function SortableLayerItem({ layer, index, isActive, isGenerating, onSelect }) {
+function SortableLayerItem({ layer, index, isActive, isGenerating, onSelect }: { layer: Layer, index: number, isActive: boolean, isGenerating: boolean, onSelect: (id: string) => void }) {
     const {
         attributes,
         listeners,

@@ -63,7 +63,7 @@ export async function getStravaActivities(page = 1, perPage = 30) {
         )
         return { activities, error: null }
     } catch (error) {
-        return { activities: [] as StravaActivity[], error: error.message || 'Unknown error' }
+        return { activities: [] as StravaActivity[], error: (error as Error).message || 'Unknown error getting activities' }
     }
 }
 
@@ -72,7 +72,7 @@ export async function getStravaAthlete() {
         const athlete = await callStravaApi<StravaAthlete>('/athlete')
         return { athlete, error: null }
     } catch (error) {
-        return { athlete: null as StravaAthlete | null, error: error.message || 'Unknown error' }
+        return { athlete: null as StravaAthlete | null, error: (error as Error).message || 'Unknown error getting athlete' }
     }
 }
 
@@ -81,6 +81,6 @@ export async function getStravaActivity(activityId: string) {
         const activity = await callStravaApi<StravaActivity>(`/activities/${activityId}`)
         return { activity, error: null }
     } catch (error) {
-        return { activity: null as StravaActivity | null, error: error.message || 'Unknown error' }
+        return { activity: null as StravaActivity | null, error: (error as Error).message || 'Unknown error getting activity' }
     }
 }
