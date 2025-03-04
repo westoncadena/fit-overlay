@@ -17,6 +17,7 @@ export type Layer = {
     scale?: number;
     locked?: boolean;
     order: number;
+    stravaActivityId?: number;
 }
 
 export type LayerState = {
