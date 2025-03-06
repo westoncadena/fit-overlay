@@ -6,7 +6,7 @@ import { useStravaStore } from "@/lib/strava-store";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Button } from "../ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Activity } from "lucide-react";
+import { Activity, RefreshCw } from "lucide-react";
 import { StravaActivity } from "@/lib/strava-store/types";
 
 export default function StravaActivityAdd() {
@@ -63,7 +63,18 @@ export default function StravaActivityAdd() {
             </PopoverTrigger>
             <PopoverContent className="w-80">
                 <div className="flex flex-col p-2">
-                    <h3 className="font-medium mb-2">Select Strava Activity</h3>
+                    <div className="flex justify-between items-center mb-2">
+                        <h3 className="font-medium">Select Strava Activity</h3>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => fetchActivities()}
+                            disabled={isLoading}
+                            className="h-8 w-8"
+                        >
+                            <RefreshCw size={16} className={isLoading ? "animate-spin" : ""} />
+                        </Button>
+                    </div>
 
                     {isLoading ? (
                         <div className="flex justify-center py-4">
