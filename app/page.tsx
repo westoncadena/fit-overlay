@@ -2,7 +2,7 @@
 
 import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
-import { SignInButton, SignUpButton, SignedIn, SignedOut } from '@clerk/nextjs';
+import { SignInButton, SignedIn, SignedOut } from '@clerk/nextjs';
 import React, { useEffect } from 'react';
 
 export default function Home() {
@@ -20,9 +20,9 @@ export default function Home() {
       <SignedOut>
         <div className="max-w-md w-full space-y-8 p-8 bg-white dark:bg-gray-800 rounded-lg shadow">
           <div className="text-center">
-            <h1 className="text-3xl font-bold mb-6">Welcome to the App</h1>
+            <h1 className="text-3xl font-bold mb-6">Welcome to Fit Overlay</h1>
             <p className="mb-8 text-gray-600 dark:text-gray-300">
-              Please sign in or create an account to continue.
+              Sign in with your Strava account to continue.
             </p>
           </div>
 
@@ -33,11 +33,6 @@ export default function Home() {
               </button>
             </SignInButton>
 
-            <SignUpButton mode="modal">
-              <button className="w-full py-2 px-4 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-800 dark:text-white font-medium rounded-md">
-                Create Account
-              </button>
-            </SignUpButton>
           </div>
         </div>
       </SignedOut>

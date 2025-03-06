@@ -30,12 +30,16 @@ export default function StravaActivityRenderer({ layer, style }: StravaActivityR
 
     return (
         <div
-            className="bg-transparent border rounded-lg shadow-sm p-4 overflow-hidden"
+            className="border-2 rounded-lg shadow-sm p-4 overflow-hidden"
             style={{
                 ...style,
                 minWidth: '300px',  // Ensure minimum width
                 width: '300px',     // Fixed width
-                maxWidth: '400px'   // Maximum width
+                maxWidth: '400px',   // Maximum width
+                borderColor: '#fc4c02', // Strava orange border
+                borderWidth: '3px',  // Thicker border
+                backgroundColor: 'rgba(255, 255, 255, 0.25)', // Semi-transparent white background
+                backdropFilter: 'blur(2px)' // Optional: adds a slight blur effect
             }}
         >
             <h3 className="font-bold text-lg mb-2 truncate" title={activity.name}>
@@ -44,22 +48,22 @@ export default function StravaActivityRenderer({ layer, style }: StravaActivityR
 
             <div className="grid grid-cols-2 gap-2 text-sm">
                 <div>
-                    <p className="text-gray-500">Distance</p>
-                    <p className="font-medium">{(activity.distance / 1000).toFixed(2)} km</p>
+                    <p style={{ color: '#fc4c02', fontSize: '0.9rem', fontWeight: 600 }}>Distance</p>
+                    <p className="font-medium text-base">{(activity.distance / 1000).toFixed(2)} km</p>
                 </div>
                 <div>
-                    <p className="text-gray-500">Duration</p>
-                    <p className="font-medium">
+                    <p style={{ color: '#fc4c02', fontSize: '0.9rem', fontWeight: 600 }}>Duration</p>
+                    <p className="font-medium text-base">
                         {Math.floor(activity.moving_time / 3600)}h {Math.floor((activity.moving_time % 3600) / 60)}m
                     </p>
                 </div>
                 <div>
-                    <p className="text-gray-500">Elevation</p>
-                    <p className="font-medium">{activity.total_elevation_gain} m</p>
+                    <p style={{ color: '#fc4c02', fontSize: '0.9rem', fontWeight: 600 }}>Elevation</p>
+                    <p className="font-medium text-base">{activity.total_elevation_gain} m</p>
                 </div>
                 <div>
-                    <p className="text-gray-500">Avg Speed</p>
-                    <p className="font-medium">{(activity.average_speed * 3.6).toFixed(1)} km/h</p>
+                    <p style={{ color: '#fc4c02', fontSize: '0.9rem', fontWeight: 600 }}>Avg Speed</p>
+                    <p className="font-medium text-base">{(activity.average_speed * 3.6).toFixed(1)} km/h</p>
                 </div>
             </div>
 
@@ -76,7 +80,7 @@ export default function StravaActivityRenderer({ layer, style }: StravaActivityR
                 </div>
             )} */}
 
-            <div className="mt-3 text-xs text-gray-500">
+            <div className="mt-3 text-xs" style={{ color: '#fc4c02' }}>
                 {new Date(activity.start_date).toLocaleDateString()}
             </div>
         </div>
