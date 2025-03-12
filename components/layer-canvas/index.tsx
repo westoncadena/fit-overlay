@@ -201,9 +201,14 @@ export default function LayerCanvas() {
                         return;
                     }
 
+                    // Use project name for the file name, with fallback and sanitization
+                    const safeProjectName = projectName
+                        ? projectName.replace(/[^a-z0-9]/gi, '-').toLowerCase()
+                        : 'canvas-export';
+
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement('a');
-                    link.download = `${projectName || 'canvas-export'}-${new Date().toISOString().slice(0, 10)}.png`;
+                    link.download = `${safeProjectName}.png`;
                     link.href = url;
                     link.click();
 

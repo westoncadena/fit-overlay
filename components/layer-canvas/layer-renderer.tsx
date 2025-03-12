@@ -19,8 +19,7 @@ export default function LayerRenderer({ layer, isSelected, generating, onWheel, 
         id: layer.id,
         disabled: layer.locked || generating,
         data: {
-            layer,
-            type: 'layer'
+            layer
         }
     });
 
@@ -132,7 +131,7 @@ export default function LayerRenderer({ layer, isSelected, generating, onWheel, 
                 <StravaActivityRenderer
                     layer={layer}
                     style={{
-                        transform: `scale(${layer.scale || 1})`,
+                        transform: "none",
                         transformOrigin: 'top left',
                     }}
                 />
