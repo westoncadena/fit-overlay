@@ -41,6 +41,33 @@ function SortableLayerItem({ layer, index, isActive, isGenerating, onSelect }: {
         transition,
     };
 
+    // Get appropriate layer name based on type
+    const getLayerDisplayName = () => {
+        if (layer.url) {
+            return null; // LayerImage will handle this
+        } else if (layer.resourceType === 'text') {
+            return layer.text ? layer.text.substring(0, 20) + (layer.text.length > 20 ? '...' : '') : 'Text Layer';
+        } else if (layer.resourceType === 'component') {
+            if (layer.stravaActivityId) {
+                return layer.name || 'Strava Activity';
+            }
+            return layer.name || 'Component';
+        }
+        return 'New Layer';
+    };
+
+    // Get icon based on layer type
+    const getLayerIcon = () => {
+        if (layer.resourceType === 'text') {
+            return <span className="text-xs text-muted-foreground mr-1">T</span>;
+        } else if (layer.resourceType === 'component' && layer.stravaActivityId) {
+            return <span className="text-xs text-[#fc4c02] mr-1">S</span>;
+        }
+        return null;
+    };
+
+    const layerDisplayName = getLayerDisplayName();
+
     return (
         <div
             ref={setNodeRef}
@@ -61,11 +88,12 @@ function SortableLayerItem({ layer, index, isActive, isGenerating, onSelect }: {
         >
             <div className="relative p-4 flex items-center">
                 <div className="flex gap-2 items-center h-8 w-full justify-between">
-                    {!layer.url ? (
-                        <p className="text-xs font-medium justify-self-end">
-                            New Layer
-                        </p>
-                    ) : null}
+                    {layerDisplayName && (
+                        <div className="flex items-center text-xs font-medium justify-self-end overflow-hidden">
+                            {getLayerIcon()}
+                            <span className="truncate">{layerDisplayName}</span>
+                        </div>
+                    )}
                     <LayerImage layer={layer} />
                     <LayerInfo layer={layer} layerIndex={index} />
                 </div>

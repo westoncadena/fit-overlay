@@ -5,9 +5,8 @@ import { useProjectStore, useScaledCanvasDimensions } from "@/lib/project-store"
 import { useCanvasSize } from './use-canvas-size';
 import useLayerScale from './use-layer-scale';
 import LayerRenderer from './layer-renderer';
-import html2canvas from 'html2canvas';
+import html2canvas from 'html2canvas-pro';
 import { DndContext, DragEndEvent, DragStartEvent, useSensor, useSensors, PointerSensor, DragMoveEvent } from '@dnd-kit/core';
-import { restrictToParentElement } from '@dnd-kit/modifiers';
 
 // Extend the Window interface to include our exportCanvas function
 declare global {
@@ -55,7 +54,7 @@ export default function LayerCanvas() {
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
-                distance: 5, // Start dragging after moving 5px
+                distance: 5,
             }
         })
     );
@@ -90,14 +89,8 @@ export default function LayerCanvas() {
             y: currentY + delta.y / scale
         };
 
-        // Ensure the layer stays within canvas boundaries (optional)
-        const boundedPosition = {
-            x: Math.max(0, Math.min(newPosition.x, canvasWidth - (layer.width || 0))),
-            y: Math.max(0, Math.min(newPosition.y, canvasHeight - (layer.height || 0)))
-        };
-
-        // Update layer position
-        updateLayerPosition(layerId, boundedPosition);
+        // Update layer position without boundary constraints
+        updateLayerPosition(layerId, newPosition);
     };
 
     // Add keyboard movement for selected layers (arrow keys)
@@ -153,14 +146,53 @@ export default function LayerCanvas() {
             if (!canvasContentRef.current) return;
 
             try {
-                // Use html2canvas to capture the canvas content
-                const canvas = await html2canvas(canvasContentRef.current, {
+                // Create a clone of the canvas content for export
+                const exportContainer = canvasContentRef.current.cloneNode(true) as HTMLElement;
+
+                // Temporarily append to document but hide it
+                exportContainer.style.position = 'absolute';
+                exportContainer.style.left = '-9999px';
+                exportContainer.style.transform = 'none'; // Remove scaling
+                document.body.appendChild(exportContainer);
+
+                // Process all layers to handle scaling correctly
+                const layerElements = exportContainer.querySelectorAll('.layer-item');
+                layerElements.forEach(layerEl => {
+                    const el = layerEl as HTMLElement;
+
+                    // Get the original scale and apply it directly to dimensions
+                    const originalScale = parseFloat(el.style.scale || '1');
+                    if (originalScale !== 1) {
+                        // Remove scale property
+                        el.style.scale = '';
+
+                        // Apply scale to width and height instead
+                        const width = parseFloat(el.style.width || '0');
+                        const height = parseFloat(el.style.height || '0');
+                        el.style.width = `${width * originalScale}px`;
+                        el.style.height = `${height * originalScale}px`;
+
+                        // Adjust position to maintain center point
+                        const left = parseFloat(el.style.left || '0');
+                        const top = parseFloat(el.style.top || '0');
+                        const widthDiff = width * originalScale - width;
+                        const heightDiff = height * originalScale - height;
+                        el.style.left = `${left - widthDiff / 2}px`;
+                        el.style.top = `${top - heightDiff / 2}px`;
+                    }
+                });
+
+                // Use html2canvas on the modified clone
+                const canvas = await html2canvas(exportContainer, {
                     backgroundColor: 'white',
                     scale: 2, // Higher scale for better quality
                     useCORS: true, // Allow cross-origin images
                     allowTaint: true,
-                    logging: false
+                    logging: false,
                 });
+
+                // Clean up the temporary element
+                document.body.removeChild(exportContainer);
 
                 // Convert to blob and download
                 canvas.toBlob((blob) => {
@@ -211,11 +243,10 @@ export default function LayerCanvas() {
                 onDragStart={handleDragStart}
                 onDragMove={handleDragMove}
                 onDragEnd={handleDragEnd}
-                modifiers={[restrictToParentElement]}
             >
                 <div
                     ref={canvasContentRef}
-                    className="absolute shadow-lg bg-white"
+                    className="absolute shadow-lg bg-white overflow-hidden"
                     style={{
                         width: `${canvasWidth}px`,
                         height: `${canvasHeight}px`,

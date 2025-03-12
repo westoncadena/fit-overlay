@@ -1,88 +1,89 @@
-import React from 'react';
-import { useStravaStore } from '@/lib/strava-store';
-import { Layer } from '@/lib/layer-store/types';
+import type React from "react"
+import { useStravaStore } from "@/lib/strava-store"
+import type { Layer } from "@/lib/layer-store/types"
 
 interface StravaActivityRendererProps {
-    layer: Layer;
-    style?: React.CSSProperties;
+    layer: Layer
+    style?: React.CSSProperties
 }
 
 export default function StravaActivityRenderer({ layer, style }: StravaActivityRendererProps) {
-    const { stravaActivityId } = layer;
-    const activity = useStravaStore(state =>
-        state.activities.find(a => a.id === stravaActivityId)
-    );
+    const { stravaActivityId } = layer
+    const activity = useStravaStore((state) => state.activities.find((a) => a.id === stravaActivityId))
 
     if (!activity) {
         return (
             <div
-                className="flex items-center justify-center bg-red-50 border border-red-200 rounded p-4"
                 style={{
                     ...style,
-                    minWidth: '300px', // Ensure minimum width
-                    width: '300px'      // Fixed width
+                    minWidth: "300px",
+                    width: "300px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "white",
                 }}
             >
-                <p className="text-red-500">Activity not found</p>
+                <p style={{ fontWeight: "bold", fontSize: "18px" }}>Activity not found</p>
             </div>
-        );
+        )
     }
 
+    // Format duration in a more readable format
+    const formatDuration = (seconds: number) => {
+        const hours = Math.floor(seconds / 3600)
+        const minutes = Math.floor((seconds % 3600) / 60)
+        return `${hours}:${minutes.toString().padStart(2, "0")}:${(seconds % 60).toString().padStart(2, "0")}`
+    }
+
+    // Use inline styles instead of Tailwind classes for better html2canvas compatibility
     return (
         <div
-            className="border-2 rounded-lg shadow-sm p-4 overflow-hidden"
             style={{
                 ...style,
-                minWidth: '300px',  // Ensure minimum width
-                width: '300px',     // Fixed width
-                maxWidth: '400px',   // Maximum width
-                borderColor: '#fc4c02', // Strava orange border
-                borderWidth: '3px',  // Thicker border
-                backgroundColor: 'rgba(255, 255, 255, 0.25)', // Semi-transparent white background
-                backdropFilter: 'blur(2px)' // Optional: adds a slight blur effect
+                minWidth: "600px",
+                width: "600px",
+                color: "white",
+                // Important: Don't rely on scale transform
+                transform: "none",
             }}
         >
-            <h3 className="font-bold text-lg mb-2 truncate" title={activity.name}>
-                {activity.name}
-            </h3>
-
-            <div className="grid grid-cols-2 gap-2 text-sm">
-                <div>
-                    <p style={{ color: '#fc4c02', fontSize: '0.9rem', fontWeight: 600 }}>Distance</p>
-                    <p className="font-medium text-base">{(activity.distance / 1000).toFixed(2)} km</p>
+            <div style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                columnGap: "16px",
+                rowGap: "24px",
+            }}>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                    <p style={{ fontSize: "14px", fontWeight: 500, opacity: 0.8, margin: 0 }}>Distance</p>
+                    <p style={{ fontSize: "30px", fontWeight: 700, margin: 0 }}>{(activity.distance / 1000).toFixed(2)} km</p>
                 </div>
-                <div>
-                    <p style={{ color: '#fc4c02', fontSize: '0.9rem', fontWeight: 600 }}>Duration</p>
-                    <p className="font-medium text-base">
-                        {Math.floor(activity.moving_time / 3600)}h {Math.floor((activity.moving_time % 3600) / 60)}m
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                    <p style={{ fontSize: "14px", fontWeight: 500, opacity: 0.8, margin: 0 }}>Avg Pace</p>
+                    <p style={{ fontSize: "30px", fontWeight: 700, margin: 0 }}>
+                        {(activity.moving_time / 60 / (activity.distance / 1000)).toFixed(2)} /km
                     </p>
                 </div>
-                <div>
-                    <p style={{ color: '#fc4c02', fontSize: '0.9rem', fontWeight: 600 }}>Elevation</p>
-                    <p className="font-medium text-base">{activity.total_elevation_gain} m</p>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                    <p style={{ fontSize: "14px", fontWeight: 500, opacity: 0.8, margin: 0 }}>Moving Time</p>
+                    <p style={{ fontSize: "30px", fontWeight: 700, margin: 0 }}>{formatDuration(activity.moving_time)}</p>
                 </div>
-                <div>
-                    <p style={{ color: '#fc4c02', fontSize: '0.9rem', fontWeight: 600 }}>Avg Speed</p>
-                    <p className="font-medium text-base">{(activity.average_speed * 3.6).toFixed(1)} km/h</p>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                    <p style={{ fontSize: "14px", fontWeight: 500, opacity: 0.8, margin: 0 }}>Elevation Gain</p>
+                    <p style={{ fontSize: "30px", fontWeight: 700, margin: 0 }}>{activity.total_elevation_gain} m</p>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                    <p style={{ fontSize: "14px", fontWeight: 500, opacity: 0.8, margin: 0 }}>Avg Speed</p>
+                    <p style={{ fontSize: "30px", fontWeight: 700, margin: 0 }}>{(activity.average_speed * 3.6).toFixed(1)} km/h</p>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                    <p style={{ fontSize: "14px", fontWeight: 500, opacity: 0.8, margin: 0 }}>Calories</p>
+                    <p style={{ fontSize: "30px", fontWeight: 700, margin: 0 }}>{activity.elapsed_time || 0} Cal</p>
                 </div>
             </div>
 
-            {/* {activity.map && (
-                <div className="mt-3 h-32 bg-gray-100 rounded overflow-hidden">
-                    <img
-                        src={activity.map.summary_polyline ?
-                            `https://maps.googleapis.com/maps/api/staticmap?size=400x200&path=enc:${activity.map.summary_polyline}&key=YOUR_API_KEY` :
-                            '/placeholder-map.png'
-                        }
-                        alt="Activity map"
-                        className="w-full h-full object-cover"
-                    />
-                </div>
-            )} */}
-
-            <div className="mt-3 text-xs" style={{ color: '#fc4c02' }}>
-                {new Date(activity.start_date).toLocaleDateString()}
-            </div>
+            {/* <div className="flex flex-col items-center justify-center mt-3 text-xs opacity-70">{new Date(activity.start_date).toLocaleDateString()}</div> */}
         </div>
-    );
-} 
+    )
+}
+

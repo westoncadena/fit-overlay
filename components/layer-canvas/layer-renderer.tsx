@@ -47,7 +47,7 @@ export default function LayerRenderer({ layer, isSelected, generating, onWheel, 
         cursor: layer.locked ? 'not-allowed' : 'move',
         zIndex: layer.order,
         transition: isDragging ? 'none' : 'box-shadow 0.2s, border 0.2s',
-        boxShadow: isSelected ? '0 0 0 2px rgba(59, 130, 246, 0.5)' : 'none',
+        boxShadow: isSelected ? '0 0 0 10px rgba(59, 130, 246, 0.5)' : 'none',
         border: isSelected ? '2px solid rgba(59, 130, 246, 0.8)' : 'none',
         // Apply transform only during drag
         transform: transform ? CSS.Transform.toString(transform) : undefined,
@@ -75,7 +75,7 @@ export default function LayerRenderer({ layer, isSelected, generating, onWheel, 
                         fill={true}
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className={cn(
-                            "rounded-lg object-contain",
+                            "object-contain",
                             generating && isSelected ? "animate-pulse" : ""
                         )}
                         draggable={false}
@@ -88,7 +88,11 @@ export default function LayerRenderer({ layer, isSelected, generating, onWheel, 
             <div
                 ref={setNodeRef}
                 key={layer.id}
-                style={style}
+                style={{
+                    ...style,
+                    scale: undefined,
+                    transform: transform ? CSS.Transform.toString(transform) : undefined,
+                }}
                 onWheel={(e) => onWheel(e, layer)}
                 onClick={handleClick}
                 {...attributes}
@@ -97,10 +101,13 @@ export default function LayerRenderer({ layer, isSelected, generating, onWheel, 
             >
                 <span
                     style={{
-                        fontSize: `${layer.fontSize || 16}px`,
+                        fontSize: `${(layer.fontSize || 16) * (layer.scale || 1)}px`,
                         color: layer.color || '#000000',
                         whiteSpace: 'pre-wrap',
-                        userSelect: 'none'
+                        userSelect: 'none',
+                        fontFamily: 'system-ui, -apple-system, sans-serif',
+                        fontWeight: 400,
+                        lineHeight: 1.2,
                     }}
                 >
                     {layer.text || 'Text'}
@@ -111,14 +118,24 @@ export default function LayerRenderer({ layer, isSelected, generating, onWheel, 
         return (
             <div
                 ref={setNodeRef}
-                style={style}
+                style={{
+                    ...style,
+                    scale: undefined,
+                    transform: transform ? CSS.Transform.toString(transform) : undefined,
+                }}
                 onClick={handleClick}
                 onWheel={(e) => onWheel(e, layer)}
                 {...attributes}
                 {...listeners}
                 className="layer-item"
             >
-                <StravaActivityRenderer layer={layer} />
+                <StravaActivityRenderer
+                    layer={layer}
+                    style={{
+                        transform: `scale(${layer.scale || 1})`,
+                        transformOrigin: 'top left',
+                    }}
+                />
             </div>
         );
     }
