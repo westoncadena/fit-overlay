@@ -10,7 +10,7 @@ interface StravaActivityRendererProps {
 export default function StravaActivityRenderer({ layer, style }: StravaActivityRendererProps) {
     const { stravaActivityId } = layer
     const activity = useStravaStore((state) => state.activities.find((a) => a.id === stravaActivityId))
-    const scale = layer.scale || 1
+    const scale = (layer.scale || 1) * 2
 
     if (!activity) {
         return (

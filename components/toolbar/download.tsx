@@ -30,24 +30,31 @@ export default function DownloadTool() {
                     throw new Error(data.error);
                 }
 
-                // Fetch the image
-                const imageResponse = await fetch(data.url);
-                if (!imageResponse.ok) {
-                    throw new Error("Failed to fetch image");
+                // For mobile compatibility
+                if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+                    // Open the URL directly in a new tab for mobile devices
+                    window.open(data.url, '_blank');
+                } else {
+                    // Desktop download flow
+                    // Fetch the image
+                    const imageResponse = await fetch(data.url);
+                    if (!imageResponse.ok) {
+                        throw new Error("Failed to fetch image");
+                    }
+                    const imageBlob = await imageResponse.blob();
+
+                    // Create a download link and trigger the download
+                    const downloadUrl = URL.createObjectURL(imageBlob);
+                    const link = document.createElement("a");
+                    link.href = downloadUrl;
+                    link.download = data.filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    // Clean up the object URL
+                    URL.revokeObjectURL(downloadUrl);
                 }
-                const imageBlob = await imageResponse.blob();
-
-                // Create a download link and trigger the download
-                const downloadUrl = URL.createObjectURL(imageBlob);
-                const link = document.createElement("a");
-                link.href = downloadUrl;
-                link.download = data.filename;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-
-                // Clean up the object URL
-                URL.revokeObjectURL(downloadUrl);
                 setPopoverOpen(false);
             } catch (error) {
                 console.error("Download failed:", error);
@@ -59,6 +66,11 @@ export default function DownloadTool() {
     const handleCanvasExport = () => {
         // Trigger the canvas export function defined in the global window object
         if (typeof window !== 'undefined' && window.exportCanvas) {
+            // For mobile compatibility
+            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+                // Set a flag to open the exported canvas in a new tab
+                window.exportCanvasForMobile = true;
+            }
             window.exportCanvas();
             setPopoverOpen(false);
         } else {
