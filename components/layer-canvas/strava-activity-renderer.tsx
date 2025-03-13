@@ -45,8 +45,11 @@ export default function StravaActivityRenderer({ layer, style }: StravaActivityR
     // Convert meters to feet for elevation
     const elevationInFeet = Math.round(activity.total_elevation_gain * 3.28084)
 
-    // Calculate pace in minutes per mile
-    const pacePerMile = (activity.moving_time / 60 / (activity.distance / 1609.34)).toFixed(2)
+    // Calculate pace in minutes per mile and format as MM:SS
+    const paceMinutesPerMile = activity.moving_time / 60 / (activity.distance / 1609.34)
+    const paceMinutes = Math.floor(paceMinutesPerMile)
+    const paceSeconds = Math.round((paceMinutesPerMile - paceMinutes) * 60)
+    const formattedPace = `${paceMinutes}:${paceSeconds.toString().padStart(2, "0")}`
 
     // Convert km/h to mph
     const speedInMph = (activity.average_speed * 2.23694).toFixed(1)
@@ -77,7 +80,7 @@ export default function StravaActivityRenderer({ layer, style }: StravaActivityR
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                     <p style={{ fontSize: `${14 * scale}px`, fontWeight: 500, opacity: 0.8, margin: 0 }}>Avg Pace</p>
                     <p style={{ fontSize: `${30 * scale}px`, fontWeight: 700, margin: 0 }}>
-                        {pacePerMile} /mi
+                        {formattedPace} /mi
                     </p>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
