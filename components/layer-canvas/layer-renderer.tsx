@@ -73,10 +73,6 @@ export default function LayerRenderer({
             .draggable({
                 inertia: true,
                 modifiers: [
-                    interact.modifiers.restrictRect({
-                        restriction: 'parent',
-                        endOnly: true
-                    }),
                     interact.modifiers.snap({
                         targets: [
                             interact.snappers.grid({ x: 10, y: 10 })

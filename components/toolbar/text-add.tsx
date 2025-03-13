@@ -8,7 +8,7 @@ import { Type } from "lucide-react"
 
 export default function TextAdd() {
     const [textInput, setTextInput] = useState("");
-    const [fontSize, setFontSize] = useState(24);
+    const [fontSize, setFontSize] = useState(72);
     const [color, setColor] = useState("#000000");
     const [popoverOpen, setPopoverOpen] = useState(false);
     const addLayer = useLayerStore((state) => state.addLayer);
@@ -26,7 +26,7 @@ export default function TextAdd() {
             };
             addLayer(newLayer);
             setTextInput("");
-            setFontSize(24);
+            setFontSize(72);
             setColor("#000000");
             setPopoverOpen(false); // Close the popover after adding the layer
         }

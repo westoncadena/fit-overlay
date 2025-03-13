@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Fit Overlay",
+  title: "Strava Overlay",
   description: "Photo Editor for Strava",
 };
 

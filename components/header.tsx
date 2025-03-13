@@ -16,7 +16,7 @@ export default function Header() {
             <div className="flex gap-4">
                 <ModeToggle />
                 <Link href="/" className="font-bold text-xl">
-                    Fit Overlay
+                    StravaOverlay
                 </Link>
             </div>
 
