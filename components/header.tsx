@@ -15,10 +15,10 @@ export default function Header() {
     return (
         <header className="flex justify-between items-center p-4 border-b">
             <div className="flex gap-4">
+                <ModeToggle />
                 <Link href="/" className="font-bold text-xl">
                     Fit Overlay
                 </Link>
-                <ModeToggle />
             </div>
 
             <div className="flex items-center gap-4">

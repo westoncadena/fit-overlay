@@ -1,6 +1,7 @@
 "use client"
 
-import ImageTools from "./toolbar/image-toolbar"
+import Toolbar from "./toolbar/toolbar"
+import ToolbarMobile from "./toolbar/toolbar-mobile"
 import LayerCanvas from "./layer-canvas"
 import Loading from "./loading"
 import LayersMenu from "./layers/layers-menu"
@@ -16,10 +17,11 @@ export default function Editor() {
             qualityPreset: QUALITY_PRESETS.MEDIUM
         }}>
             <div className="flex h-full">
-                <ImageTools />
+                <Toolbar />
                 <Loading />
                 <LayerCanvas />
                 <LayersMenu />
+                <ToolbarMobile />
             </div>
         </ProjectStore.Provider>
     )

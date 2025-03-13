@@ -153,7 +153,7 @@ export default function LayersMenu() {
                 <Button
                     variant="outline"
                     size="icon"
-                    className="md:hidden fixed bottom-4 right-4 z-50"
+                    className="md:hidden fixed top-20 right-4 z-[100]"
                     onClick={toggleExpanded}
                     aria-label="Open layers panel"
                 >
@@ -166,10 +166,10 @@ export default function LayersMenu() {
                 "md:basis-[320px] md:shrink-0 md:static md:h-auto",
                 "scrollbar-thin scrollbar-track-secondary overflow-y-scroll scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-rounded-full overflow-x-hidden relative flex flex-col shadow-2xl",
                 isExpanded ?
-                    "fixed inset-0 z-40 h-full w-full" :
+                    "fixed inset-0 z-[100] h-full w-full" :
                     "hidden md:flex"
             )}>
-                <CardHeader className="sticky top-0 z-50 px-4 py-6 min-h-24 bg-card shadow-sm">
+                <CardHeader className="sticky top-0 z-100 px-4 py-6 min-h-24 bg-card shadow-sm">
                     <div className="flex justify-between items-center">
                         <div>
                             <CardTitle className="text-sm flex items-center gap-2">
@@ -219,7 +219,7 @@ export default function LayersMenu() {
                         </DndContext>
                     )}
                 </CardContent>
-                <div className="sticky bottom-0 bg-card flex gap-2 shrink-0 p-4">
+                <div className="sticky top-0 bg-card flex gap-2 shrink-0 p-4">
                     {activeLayer?.resourceType && !isExpanded && (
                         <ExportAsset resource={activeLayer.resourceType} />
                     )}
