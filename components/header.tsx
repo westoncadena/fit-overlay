@@ -26,9 +26,6 @@ export default function Header() {
                     <Link href="/editor" className="hover:underline">
                         Editor
                     </Link>
-                    <Link href="/activities" className="hover:underline">
-                        Activities
-                    </Link>
                     <UserButton afterSignOutUrl="/" />
                 </SignedIn>
                 <SignedOut>

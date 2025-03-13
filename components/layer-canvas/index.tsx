@@ -6,7 +6,6 @@ import { useCanvasSize } from './use-canvas-size';
 import useLayerScale from './use-layer-scale';
 import LayerRenderer from './layer-renderer';
 import html2canvas from 'html2canvas-pro';
-import { DndContext, DragEndEvent, DragStartEvent, useSensor, useSensors, PointerSensor, DragMoveEvent } from '@dnd-kit/core';
 
 // Extend the Window interface to include our exportCanvas function
 declare global {
@@ -23,6 +22,7 @@ export default function LayerCanvas() {
     const setActiveLayer = useLayerStore((state) => state.setActiveLayer);
     const updateLayerPosition = useLayerStore((state) => state.updateLayerPosition);
     const updateLayerScale = useLayerStore((state) => state.updateLayerScale);
+    const updateLayerDimensions = useLayerStore((state) => state.updateLayerDimensions);
     const generating = useImageStore((state) => state.generating);
 
     // Get canvas dimensions from project store
@@ -50,47 +50,14 @@ export default function LayerCanvas() {
         updateLayerScale
     );
 
-    // Configure DnD sensors
-    const sensors = useSensors(
-        useSensor(PointerSensor, {
-            activationConstraint: {
-                distance: 5,
-            }
-        })
-    );
-
-    // Handle drag start - set active layer
-    const handleDragStart = (event: DragStartEvent) => {
-        const { active } = event;
-        setActiveLayer(active.id as string);
+    // Handle layer position update
+    const handleLayerMove = (layerId: string, position: { x: number, y: number }) => {
+        updateLayerPosition(layerId, position);
     };
 
-    const handleDragMove = (event: DragMoveEvent) => {
-        console.log("Drag move", event);
-    }
-
-    // Handle drag end - update layer position with improved positioning
-    const handleDragEnd = (event: DragEndEvent) => {
-        const { active, delta } = event;
-        const layerId = active.id as string;
-
-        // Find the layer
-        const layer = layers.find(l => l.id === layerId);
-        if (!layer || layer.locked) return;
-
-        // Get current position (handle both formats)
-        const currentX = layer.position?.x ?? 0;
-        const currentY = layer.position?.y ?? 0;
-
-        // Calculate new position based on delta and scale
-        // Divide by scale to ensure movement is consistent regardless of zoom level
-        const newPosition = {
-            x: currentX + delta.x / scale,
-            y: currentY + delta.y / scale
-        };
-
-        // Update layer position without boundary constraints
-        updateLayerPosition(layerId, newPosition);
+    // Handle layer resize
+    const handleLayerResize = (layerId: string, width: number, height: number) => {
+        updateLayerDimensions(layerId, width, height);
     };
 
     // Add keyboard movement for selected layers (arrow keys)
@@ -243,39 +210,36 @@ export default function LayerCanvas() {
                 backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
             }}
         >
-            <DndContext
-                sensors={sensors}
-                onDragStart={handleDragStart}
-                onDragMove={handleDragMove}
-                onDragEnd={handleDragEnd}
+            <div
+                ref={canvasContentRef}
+                className="absolute shadow-lg bg-white overflow-hidden"
+                style={{
+                    width: `${canvasWidth}px`,
+                    height: `${canvasHeight}px`,
+                    transform: `scale(${scale})`,
+                    transformOrigin: 'center',
+                    left: '50%',
+                    top: '50%',
+                    marginLeft: `-${canvasWidth / 2}px`,
+                    marginTop: `-${canvasHeight / 2}px`,
+                    border: '1px solid #ddd'
+                }}
             >
-                <div
-                    ref={canvasContentRef}
-                    className="absolute shadow-lg bg-white overflow-hidden"
-                    style={{
-                        width: `${canvasWidth}px`,
-                        height: `${canvasHeight}px`,
-                        transform: `scale(${scale})`,
-                        transformOrigin: 'center',
-                        left: '50%',
-                        top: '50%',
-                        marginLeft: `-${canvasWidth / 2}px`,
-                        marginTop: `-${canvasHeight / 2}px`,
-                        border: '1px solid #ddd'
-                    }}
-                >
-                    {sortedLayers.map(layer => (
-                        <LayerRenderer
-                            key={layer.id}
-                            layer={layer}
-                            isSelected={layer.id === activeLayer?.id}
-                            generating={generating}
-                            onWheel={handleWheel}
-                            onSelect={setActiveLayer}
-                        />
-                    ))}
-                </div>
-            </DndContext>
+                {sortedLayers.map((layer) => (
+                    <LayerRenderer
+                        key={layer.id}
+                        layer={layer}
+                        isSelected={activeLayer?.id === layer.id}
+                        generating={generating}
+                        onWheel={handleWheel}
+                        onSelect={setActiveLayer}
+                        onMove={handleLayerMove}
+                        onResize={handleLayerResize}
+                    />
+                ))}
+            </div>
         </div>
     );
-} 
+}
+
+

@@ -1,10 +1,9 @@
 "use client"
 
-import Layers from "./layers/layers"
-// import { useLayerStore } from "@/lib/layer-store"
 import ImageTools from "./toolbar/image-toolbar"
 import LayerCanvas from "./layer-canvas"
 import Loading from "./loading"
+import LayersMenu from "./layers/layers-menu"
 import { ProjectStore, INSTAGRAM_ASPECT_RATIOS, QUALITY_PRESETS } from "@/lib/project-store";
 
 export default function Editor() {
@@ -17,14 +16,10 @@ export default function Editor() {
             qualityPreset: QUALITY_PRESETS.MEDIUM
         }}>
             <div className="flex h-full">
-                <div className="py-6 px-4  min-w-48 ">
-                    <div className="flex flex-col gap-4 ">
-                        <ImageTools />
-                    </div>
-                </div>
+                <ImageTools />
                 <Loading />
                 <LayerCanvas />
-                <Layers />
+                <LayersMenu />
             </div>
         </ProjectStore.Provider>
     )

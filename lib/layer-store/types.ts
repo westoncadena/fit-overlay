@@ -32,6 +32,7 @@ export type LayerActions = {
     updateLayer: (layer: Layer) => void
     updateLayerPosition: (id: string, position: { x: number; y: number }) => void
     updateLayerScale: (id: string, scale: number) => void
+    updateLayerDimensions: (id: string, width: number, height: number) => void
     reorderLayers: (sourceIndex: number, destinationIndex: number) => void
 }
 
