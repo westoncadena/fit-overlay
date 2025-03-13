@@ -13,6 +13,7 @@ import {
     closestCenter,
     KeyboardSensor,
     PointerSensor,
+    TouchSensor,
     useSensor,
     useSensors,
     DragEndEvent
@@ -117,12 +118,21 @@ export default function LayersMenu() {
     // Sort layers by order
     const sortedLayers = [...layers].sort((a, b) => a.order - b.order);
 
-    // Set up sensors for drag detection
+    // Set up sensors for drag detection - ensure this is always called
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
-                distance: 5,
+                distance: 8,
+                delay: 100,
+                tolerance: 5,
             },
+        }),
+        useSensor(TouchSensor, {
+            // Touch-specific constraints
+            activationConstraint: {
+                delay: 250,
+                tolerance: 5,
+            }
         }),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates,

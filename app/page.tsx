@@ -16,9 +16,12 @@ export default function Home() {
   }, [isSignedIn, isLoaded, router]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4">
+    <div
+      className="flex flex-col items-center justify-center min-h-screen p-4 bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: 'url("/login-backgound.jpg")' }}
+    >
       <SignedOut>
-        <div className="max-w-md w-full space-y-8 p-8 bg-white dark:bg-gray-800 rounded-lg shadow">
+        <div className="max-w-md w-full space-y-8 p-8 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg shadow">
           <div className="text-center">
             <h1 className="text-3xl font-bold mb-6">Welcome to Fit Overlay</h1>
             <p className="mb-8 text-gray-600 dark:text-gray-300">
@@ -38,7 +41,7 @@ export default function Home() {
       </SignedOut>
 
       <SignedIn>
-        <div className="text-center">
+        <div className="text-center bg-white/90 dark:bg-gray-800/90 p-6 rounded-lg shadow backdrop-blur-sm">
           <p>Redirecting to editor...</p>
         </div>
       </SignedIn>

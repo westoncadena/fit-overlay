@@ -44,7 +44,7 @@ export default function LayerCanvas() {
     const sortedLayers = [...layers].sort((a, b) => a.order - b.order);
 
     // Layer scaling functionality
-    const { handleWheel } = useLayerScale(
+    const { handleWheel, handleTouchStart, handleTouchMove, handleTouchEnd } = useLayerScale(
         activeLayer?.id || '',
         layers,
         updateLayerScale
@@ -231,6 +231,9 @@ export default function LayerCanvas() {
                         isSelected={activeLayer?.id === layer.id}
                         generating={generating}
                         onWheel={handleWheel}
+                        onTouchStart={handleTouchStart}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={handleTouchEnd}
                         onSelect={setActiveLayer}
                         onMove={handleLayerMove}
                         onResize={handleLayerResize}

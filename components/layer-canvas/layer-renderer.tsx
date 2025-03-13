@@ -10,6 +10,9 @@ interface LayerRendererProps {
     isSelected: boolean;
     generating: boolean;
     onWheel: (e: React.WheelEvent, layer: Layer) => void;
+    onTouchStart: (e: React.TouchEvent, layer: Layer) => void;
+    onTouchMove: (e: React.TouchEvent, layer: Layer) => void;
+    onTouchEnd: (e: React.TouchEvent) => void;
     onSelect: (id: string) => void;
     onMove: (id: string, position: { x: number, y: number }) => void;
     onResize: (id: string, width: number, height: number) => void;
@@ -20,6 +23,9 @@ export default function LayerRenderer({
     isSelected,
     generating,
     onWheel,
+    onTouchStart,
+    onTouchMove,
+    onTouchEnd,
     onSelect,
     onMove,
     onResize
@@ -137,6 +143,9 @@ export default function LayerRenderer({
                 style={style}
                 className={`${generating ? 'pointer-events-none' : ''} layer-item`}
                 onWheel={(e) => onWheel(e, layer)}
+                onTouchStart={(e) => onTouchStart(e, layer)}
+                onTouchMove={(e) => onTouchMove(e, layer)}
+                onTouchEnd={onTouchEnd}
                 onClick={handleClick}
             >
                 <div className="relative" style={{
@@ -171,6 +180,9 @@ export default function LayerRenderer({
                     scale: undefined,
                 }}
                 onWheel={(e) => onWheel(e, layer)}
+                onTouchStart={(e) => onTouchStart(e, layer)}
+                onTouchMove={(e) => onTouchMove(e, layer)}
+                onTouchEnd={onTouchEnd}
                 onClick={handleClick}
                 className="layer-item"
             >
@@ -199,6 +211,9 @@ export default function LayerRenderer({
                 }}
                 onClick={handleClick}
                 onWheel={(e) => onWheel(e, layer)}
+                onTouchStart={(e) => onTouchStart(e, layer)}
+                onTouchMove={(e) => onTouchMove(e, layer)}
+                onTouchEnd={onTouchEnd}
                 className="layer-item"
             >
                 <StravaActivityRenderer
