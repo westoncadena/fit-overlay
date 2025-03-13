@@ -23,7 +23,7 @@ export default function Home() {
       <SignedOut>
         <div className="max-w-md w-full space-y-8 p-8 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg shadow">
           <div className="text-center">
-            <h1 className="text-3xl font-bold mb-6">Welcome to Fit Overlay</h1>
+            <h1 className="text-3xl font-bold mb-6">Welcome to Strava Overlay</h1>
             <p className="mb-8 text-gray-600 dark:text-gray-300">
               Sign in with your Strava account to continue.
             </p>
