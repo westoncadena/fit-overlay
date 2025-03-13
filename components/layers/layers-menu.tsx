@@ -24,6 +24,10 @@ import {
     verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import React from "react";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Layers } from "lucide-react";
 
 // Create a sortable layer item component
 function SortableLayerItem({ layer, index, isActive, isGenerating, onSelect }: { layer: Layer, index: number, isActive: boolean, isGenerating: boolean, onSelect: (id: string) => void }) {
@@ -102,12 +106,13 @@ function SortableLayerItem({ layer, index, isActive, isGenerating, onSelect }: {
     );
 }
 
-export default function Layers() {
+export default function LayersMenu() {
     const layers = useLayerStore((state) => state.layers);
     const activeLayer = useLayerStore((state) => state.activeLayer);
     const setActiveLayer = useLayerStore((state) => state.setActiveLayer);
     const reorderLayers = useLayerStore((state) => state.reorderLayers);
     const generating = useImageStore((state) => state.generating);
+    const [isExpanded, setIsExpanded] = React.useState(false);
 
     // Sort layers by order
     const sortedLayers = [...layers].sort((a, b) => a.order - b.order);
@@ -137,46 +142,99 @@ export default function Layers() {
         reorderLayers(oldIndex, newIndex);
     };
 
+    const toggleExpanded = () => {
+        setIsExpanded(!isExpanded);
+    };
+
     return (
-        <Card className="basis-[320px] shrink-0 scrollbar-thin scrollbar-track-secondary overflow-y-scroll scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-rounded-full overflow-x-hidden relative flex flex-col shadow-2xl">
-            <CardHeader className="sticky top-0 z-50 px-4 py-6 min-h-24 bg-card shadow-sm">
-                <div>
-                    <CardTitle className="text-sm">{activeLayer?.name || "No Layer Selected"}</CardTitle>
-                    {activeLayer?.width && activeLayer?.height ? (
-                        <CardDescription>
-                            {activeLayer.width}x{activeLayer.height}
-                        </CardDescription>
+        <>
+            {/* Mobile toggle button - only visible when menu is closed */}
+            {!isExpanded && (
+                <Button
+                    variant="outline"
+                    size="icon"
+                    className="md:hidden fixed top-20 right-4 z-[100]"
+                    onClick={toggleExpanded}
+                    aria-label="Open layers panel"
+                >
+                    <Layers className="h-7 w-7" />
+                </Button>
+            )}
+
+            <Card className={cn(
+                "transition-all duration-300 ease-in-out",
+                "md:basis-[320px] md:shrink-0 md:static md:h-auto",
+                "scrollbar-thin scrollbar-track-secondary overflow-y-scroll scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-rounded-full overflow-x-hidden relative flex flex-col shadow-2xl",
+                isExpanded ?
+                    "fixed inset-0 z-[100] h-full w-full" :
+                    "hidden md:flex"
+            )}>
+                <CardHeader className="sticky top-0 z-100 px-4 py-6 min-h-24 bg-card shadow-sm">
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <CardTitle className="text-sm flex items-center gap-2">
+                                <Layers className="h-4 w-4" />
+                                Layers
+                            </CardTitle>
+                            {activeLayer?.name && (
+                                <CardDescription>
+                                    {activeLayer.name}
+                                    {activeLayer?.width && activeLayer?.height ? (
+                                        <span className="ml-1">
+                                            ({activeLayer.width}x{activeLayer.height})
+                                        </span>
+                                    ) : null}
+                                </CardDescription>
+                            )}
+                        </div>
+                    </div>
+                </CardHeader>
+                <CardContent className="flex-1 flex flex-col">
+                    {layers.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center h-32 text-muted-foreground">
+                            <p className="text-sm">No layers yet</p>
+                            <p className="text-xs">Add layers to your project to see them here</p>
+                        </div>
+                    ) : (
+                        <DndContext
+                            sensors={sensors}
+                            collisionDetection={closestCenter}
+                            onDragEnd={handleDragEnd}
+                        >
+                            <SortableContext
+                                items={sortedLayers.map(layer => layer.id)}
+                                strategy={verticalListSortingStrategy}
+                            >
+                                {sortedLayers.map((layer, index) => (
+                                    <SortableLayerItem
+                                        key={layer.id}
+                                        layer={layer}
+                                        index={index}
+                                        isActive={activeLayer.id === layer.id}
+                                        isGenerating={generating}
+                                        onSelect={setActiveLayer}
+                                    />
+                                ))}
+                            </SortableContext>
+                        </DndContext>
+                    )}
+                </CardContent>
+                <div className="sticky top-0 bg-card flex gap-2 shrink-0 p-4">
+                    {activeLayer?.resourceType && !isExpanded && (
+                        <ExportAsset resource={activeLayer.resourceType} />
+                    )}
+                    {isExpanded ? (
+                        <Button
+                            variant="outline"
+                            className="w-full md:hidden"
+                            onClick={toggleExpanded}
+                        >
+                            <X className="h-5 w-5 mr-2" />
+                            Close Layers
+                        </Button>
                     ) : null}
                 </div>
-            </CardHeader>
-            <CardContent className="flex-1 flex flex-col">
-                <DndContext
-                    sensors={sensors}
-                    collisionDetection={closestCenter}
-                    onDragEnd={handleDragEnd}
-                >
-                    <SortableContext
-                        items={sortedLayers.map(layer => layer.id)}
-                        strategy={verticalListSortingStrategy}
-                    >
-                        {sortedLayers.map((layer, index) => (
-                            <SortableLayerItem
-                                key={layer.id}
-                                layer={layer}
-                                index={index}
-                                isActive={activeLayer.id === layer.id}
-                                isGenerating={generating}
-                                onSelect={setActiveLayer}
-                            />
-                        ))}
-                    </SortableContext>
-                </DndContext>
-            </CardContent>
-            <div className="sticky bottom-0 bg-card flex gap-2 shrink-0">
-                {activeLayer?.resourceType && (
-                    <ExportAsset resource={activeLayer.resourceType} />
-                )}
-            </div>
-        </Card>
-    )
+            </Card>
+        </>
+    );
 }

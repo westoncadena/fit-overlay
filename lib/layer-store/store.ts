@@ -59,6 +59,13 @@ const getStore = (initialState: {
                         ),
                     })),
 
+                updateLayerDimensions: (id: string, width: number, height: number) =>
+                    set((state) => ({
+                        layers: state.layers.map((l) =>
+                            l.id === id ? { ...l, width, height } : l
+                        ),
+                    })),
+
                 reorderLayers: (sourceIndex: number, destinationIndex: number) =>
                     set((state) => {
                         const sortedLayers = [...state.layers].sort((a, b) => a.order - b.order);
