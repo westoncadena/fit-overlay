@@ -1,7 +1,6 @@
 import Link from "next/link";
 import {
     SignInButton,
-    SignUpButton,
     SignedIn,
     SignedOut,
     UserButton,
@@ -30,7 +29,6 @@ export default function Header() {
                 </SignedIn>
                 <SignedOut>
                     <SignInButton mode="modal" />
-                    <SignUpButton mode="modal" />
                 </SignedOut>
             </div>
         </header>

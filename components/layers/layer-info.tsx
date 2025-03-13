@@ -29,7 +29,7 @@ export default function LayerInfo({
                     <Ellipsis size={18} />
                 </Button>
             </DialogTrigger>
-            <DialogContent className="text-xs">
+            <DialogContent className="text-xs z-[200]">
                 <h3 className="text-lg font-medium text-center mb-2">
                     Layer {layer.id}
                 </h3>

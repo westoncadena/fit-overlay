@@ -3,10 +3,11 @@
 import { useRef } from "react"
 import TextAdd from "./text-add"
 import ImageAdd from "./image-add"
-import BgRemove from "./bg-remove"
-import GenRemove from "./gen-remove"
+// import BgRemove from "./bg-remove"
+// import GenRemove from "./gen-remove"
 import StravaActivityAdd from "./strava-activity-add"
 import CanvasSettings from "../project/canvas-settings"
+import DownloadTool from "./download"
 
 export default function ToolbarMobile() {
     const scrollRef = useRef<HTMLDivElement>(null)
@@ -15,8 +16,9 @@ export default function ToolbarMobile() {
         { component: <ImageAdd /> },
         { component: <TextAdd /> },
         { component: <StravaActivityAdd /> },
-        { component: <GenRemove /> },
-        { component: <BgRemove /> },
+        { component: <DownloadTool /> },
+        // { component: <GenRemove /> },
+        // { component: <BgRemove /> },
         { component: <CanvasSettings /> },
     ]
 
@@ -25,7 +27,7 @@ export default function ToolbarMobile() {
     }
 
     return (
-        <div className="fixed bottom-0 left-0 right-0  pb-safe z-50 block lg:hidden">
+        <div className="fixed bottom-0 left-0 right-0 z-50 block lg:hidden bg-background border-t shadow-md">
             <div className="relative flex items-center">
                 <div
                     ref={scrollRef}
