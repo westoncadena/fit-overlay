@@ -162,27 +162,37 @@ export default function LayerCanvas() {
                 // Clean up the temporary element
                 document.body.removeChild(exportContainer);
 
-                // Convert to blob and download
-                canvas.toBlob((blob) => {
-                    if (!blob) {
-                        console.error('Failed to create blob from canvas');
-                        return;
-                    }
+                // Use project name for the file name, with fallback and sanitization
+                const safeProjectName = projectName
+                    ? projectName.replace(/[^a-z0-9]/gi, '-').toLowerCase()
+                    : 'canvas-export';
 
-                    // Use project name for the file name, with fallback and sanitization
-                    const safeProjectName = projectName
-                        ? projectName.replace(/[^a-z0-9]/gi, '-').toLowerCase()
-                        : 'canvas-export';
+                // Check if we're on mobile or the mobile flag is set
+                if (window.exportCanvasForMobile || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+                    // For mobile: open in new tab
+                    const dataUrl = canvas.toDataURL('image/png');
+                    window.open(dataUrl, '_blank');
 
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.download = `${safeProjectName}.png`;
-                    link.href = url;
-                    link.click();
+                    // Reset the mobile flag
+                    window.exportCanvasForMobile = false;
+                } else {
+                    // Convert to blob and download for desktop
+                    canvas.toBlob((blob) => {
+                        if (!blob) {
+                            console.error('Failed to create blob from canvas');
+                            return;
+                        }
 
-                    // Clean up
-                    URL.revokeObjectURL(url);
-                }, 'image/png');
+                        const url = URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.download = `${safeProjectName}.png`;
+                        link.href = url;
+                        link.click();
+
+                        // Clean up
+                        URL.revokeObjectURL(url);
+                    }, 'image/png');
+                }
             } catch (error) {
                 console.error('Error exporting canvas:', error);
             }
